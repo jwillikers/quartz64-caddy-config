@@ -1,0 +1,158 @@
+= Quartz64 Caddy Config
+Jordan Williams <jordan@jwillikers.com>
+:experimental:
+:icons: font
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+endif::[]
+:Asciidoctor_: https://asciidoctor.org/[Asciidoctor]
+:Caddy: https://caddyserver.com/[Caddy]
+:fish: https://fishshell.com/[fish]
+:Fedora-IoT: https://getfedora.org/en/iot/[Fedora IoT]
+:Git: https://git-scm.com/[Git]
+:Linux: https://www.linuxfoundation.org/[Linux]
+:MinIO: https://min.io/[MinIO]
+:Podman: https://podman.io/[Podman]
+:pre-commit: https://pre-commit.com/[pre-commit]
+:Python: https://www.python.org/[Python]
+:Rouge: https://rouge.jneen.net/[Rouge]
+:Ruby: https://www.ruby-lang.org/en/[Ruby]
+
+image:https://github.com/jwillikers/quartz64-caddy-config/actions/workflows/ci.yml/badge.svg[GitHub Workflow Status]
+image:https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white[pre-commit, link=https://github.com/pre-commit/pre-commit]
+
+{Caddy} configuration file for services on running on my PINE64 Quartz64 SBC.
+
+== Synopsis
+
+These instructions are for using this Caddyfile and Caddy container using rootless {Podman} on {Fedora-IoT}.
+The instructions for building will assume that you are on Fedora.
+
+.Services
+* {MinIO}
+
+== Usage
+
+. Install toolbox.
++
+[source,sh]
+----
+sudo rpm-ostree install toolbox
+----
+
+. Reboot.
++
+[source,sh]
+----
+sudo systemctl reboot
+----
+
+. Create a toolbox container.
++
+[source,sh]
+----
+toolbox create
+----
+
+. Install the necessary dependencies in the toolbox.
++
+[source,sh]
+----
+toolbox run sudo dnf -y install git
+----
+
+. Clone the repository.
++
+[source,sh]
+----
+toolbox run git clone git@github.com:jwillikers/quartz64-caddy-config.git
+----
+
+. Change into the project directory.
++
+[source,sh]
+----
+cd quartz64-caddy-config
+----
+
+. Follow the instructions for setting up and running the https://github.com/jwillikers/caddy-cloudflare-image[Caddy Cloudflare Image] using the Caddyfile provided in this repository.
+
+== Develop
+
+. Install the pre-commit in the toolbox.
++
+[source,sh]
+----
+toolbox run sudo dnf -y install pre-commit
+----
+
+. Install pre-commit's Git hooks.
++
+[source,sh]
+----
+toolbox run pre-commit install
+----
+
+. Format the Caddyfile.
++
+[source,sh]
+----
+podman run \
+  -it \
+  --name caddy-fmt \
+  --rm \
+  --volume $PWD/Caddyfile:/srv/Caddyfile:Z \
+  docker.io/caddy:latest caddy fmt --overwrite
+----
+
+. Validate the Caddyfile.
++
+[source,sh]
+----
+podman run \
+  -it \
+  --name caddy-validate \
+  --rm \
+  --volume $PWD/Caddyfile:/srv/Caddyfile:Z \
+  quay.io/jwillikers/caddy-cloudflare:latest caddy validate
+----
+
+== Contributing
+
+Contributions in the form of issues, feedback, and even pull requests are welcome.
+Make sure to adhere to the project's link:CODE_OF_CONDUCT.adoc[Code of Conduct].
+
+== Open Source Software
+
+This project is built on the hard work of countless open source contributors.
+Several of these projects are enumerated below.
+
+* {Asciidoctor_}
+* {Caddy}
+* {Fedora-IoT}
+* {fish}
+* {Git}
+* {Linux}
+* {Podman}
+* {pre-commit}
+* {Python}
+* {Rouge}
+* {Ruby}
+
+== Code of Conduct
+
+Refer to the project's link:CODE_OF_CONDUCT.adoc[Code of Conduct] for details.
+
+== License
+
+This repository is licensed under the https://www.gnu.org/licenses/gpl-3.0.html[GPLv3], a copy of which is provided in the link:LICENSE.adoc[license file].
+
+© 2022 Jordan Williams
+
+== Authors
+
+mailto:{email}[{author}]

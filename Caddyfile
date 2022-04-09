@@ -1,0 +1,20 @@
+{
+        email jordan@jwillikers.io
+        acme_dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+        # For testing
+        # acme_ca https://acme-staging-v02.api.letsencrypt.org/directory
+}
+
+console.minio.jwillikers.io, console.minio.lan.jwillikers.io {
+    reverse_proxy minio-server.dns.podman:9001 {
+        header_up X-Forwarded-Host {host}
+        header_up Host {host}
+    }
+}
+
+minio.jwillikers.io, minio.lan.jwillikers.io {
+    reverse_proxy minio-server.dns.podman:9000 {
+        header_up X-Forwarded-Host {host}
+        header_up Host {host}
+    }
+}
